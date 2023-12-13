@@ -1,5 +1,33 @@
 #include "nodes.hpp"
 
+Ramp::Ramp(const Ramp &ramp) {
+    id_ = ramp.get_id();
+    di_ = ramp.get_delivery_interval();
+    receiver_preferences_ = ramp.receiver_preferences_;
+}
+
+Ramp& Ramp::operator=(const Ramp &ramp) noexcept{
+    id_ = ramp.get_id();
+    di_ = ramp.get_delivery_interval();
+    receiver_preferences_ = ramp.receiver_preferences_;
+    return *this;
+}
+
+Worker::Worker(const Worker &worker){
+    id_ = worker.get_id();
+    pd_ = worker.get_processing_duration();
+    receiver_preferences_ = worker.receiver_preferences_;
+    q_ = std::make_unique<PackageQueue>(worker.get_queue()->get_queue_type());
+}
+
+Worker& Worker::operator=(const Worker &worker) noexcept {
+    id_ = worker.get_id();
+    pd_ = worker.get_processing_duration();
+    receiver_preferences_ = worker.receiver_preferences_;
+    q_ = std::make_unique<PackageQueue>(worker.get_queue()->get_queue_type());
+    return *this;
+}
+
 void ReceiverPreferences::add_receiver(IPackageReceiver *r){
     if(preferences_.empty()){
         preferences_.emplace(r, 1);

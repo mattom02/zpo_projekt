@@ -9,6 +9,10 @@
 #include <memory>
 #include "helpers.hpp"
 
+enum ReceiverType{
+    WORKER, STOREHOUSE
+};
+
 class IPackageReceiver{
 public:
     virtual void receive_package(Package&& p) = 0;
@@ -16,6 +20,8 @@ public:
     virtual ElementID get_id() const = 0;
 
     using const_iterator = IPackageStockpile::const_iterator;
+
+    virtual ReceiverType get_receiver_type() const = 0;
 
     virtual const_iterator begin() const = 0;
 
@@ -78,7 +84,13 @@ private:
 
 class Ramp : public PackageSender{
 public:
-    Ramp(ElementID id, TimeOffset di) : PackageSender(), id_(id), di_(di) {}
+    explicit Ramp(ElementID id, TimeOffset di) : PackageSender(), id_(id), di_(di) {}
+
+    Ramp(Ramp&& ramp) = default;
+
+    Ramp(const Ramp &ramp);
+
+    Ramp& operator=(const Ramp &ramp) noexcept;
 
     void deliver_goods(Time t);
 
@@ -95,11 +107,21 @@ private:
 
 class Worker : public PackageSender, public IPackageReceiver{
 public:
-    Worker(ElementID id, TimeOffset pd, std::unique_ptr<IPackageQueue> q) : PackageSender(), id_(id), pd_(pd), q_(std::move(q)) {}
+    explicit Worker(ElementID id, TimeOffset pd, std::unique_ptr<IPackageQueue> q) : PackageSender(), id_(id), pd_(pd), q_(std::move(q)) {}
+
+    Worker() = default;
+
+    Worker(Worker&& worker) = default;
+
+    Worker(const Worker &worker);
+
+    Worker& operator=(const Worker &worker) noexcept;
 
     ElementID get_id() const override { return id_; }
 
     void do_work(Time t);
+
+    ReceiverType get_receiver_type() const override { return receiverType_; }
 
     TimeOffset get_processing_duration() const { return pd_; }
 
@@ -115,8 +137,11 @@ public:
 
     const_iterator cend() const override { return q_->end(); }
 
+    IPackageQueue* get_queue() const { return q_.get(); }
+
     ~Worker() = default;
 private:
+    ReceiverType receiverType_ = WORKER;
     ElementID id_;
     TimeOffset pd_;
     std::unique_ptr<IPackageQueue> q_;
@@ -128,7 +153,15 @@ class Storehouse : public IPackageReceiver{
 public:
     explicit Storehouse(ElementID id, std::unique_ptr<IPackageStockpile> d = std::make_unique<PackageQueue>(PackageQueueType::FIFO)) : id_(id), d_(std::move(d)) {}
 
+    Storehouse(Storehouse&& storehouse) = default;
+
+    Storehouse(const Storehouse &storehouse) : id_(storehouse.get_id()) {}
+
+    Storehouse& operator=(const Storehouse &storehouse) noexcept { id_ = storehouse.get_id(); return *this;}
+
     void receive_package(Package&& p) override;
+
+    ReceiverType get_receiver_type() const override { return receiverType_; }
 
     ElementID get_id() const override { return id_; }
 
@@ -142,6 +175,7 @@ public:
 
     ~Storehouse() = default;
 private:
+    ReceiverType receiverType_ = STOREHOUSE;
     ElementID id_;
     std::unique_ptr<IPackageStockpile> d_;
 };

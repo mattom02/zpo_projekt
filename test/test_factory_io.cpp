@@ -63,28 +63,28 @@ TEST(FactoryIOTest, ParseLinkOneReceiver) {
     ASSERT_NE(prefs.find(key), prefs.end());
     EXPECT_DOUBLE_EQ(prefs[key], 1.0);
 }
+/*
+TEST(FactoryIOTest, ParseLinkOneReceiverWithDefinedProbability) {
+    std::ostringstream oss;
+    oss << "LOADING_RAMP id=1 delivery-interval=3" << "\n"
+        << "STOREHOUSE id=1" << "\n"
+        << "LINK src=ramp-1 dest=store-1 p=1.0" << "\n";
+    std::istringstream iss(oss.str());
+    auto factory = load_factory_structure(iss);
 
-//TEST(FactoryIOTest, ParseLinkOneReceiverWithDefinedProbability) {
-//    std::ostringstream oss;
-//    oss << "LOADING_RAMP id=1 delivery-interval=3" << "\n"
-//        << "STOREHOUSE id=1" << "\n"
-//        << "LINK src=ramp-1 dest=store-1 p=1.0" << "\n";
-//    std::istringstream iss(oss.str());
-//    auto factory = load_factory_structure(iss);
-//
-//    ASSERT_EQ(std::next(factory.ramp_cbegin(), 1), factory.ramp_cend());
-//    const auto& r = *(factory.ramp_cbegin());
-//
-//    ASSERT_EQ(std::next(factory.storehouse_cbegin(), 1), factory.storehouse_cend());
-//    const auto& s = *(factory.storehouse_cbegin());
-//
-//    auto prefs = r.receiver_preferences_.get_preferences();
-//    ASSERT_EQ(1U, prefs.size());
-//    auto key = dynamic_cast<IPackageReceiver*>(const_cast<Storehouse*>(&s));
-//    ASSERT_NE(prefs.find(key), prefs.end());
-//    EXPECT_DOUBLE_EQ(prefs[key], 1.0);
-//}
+    ASSERT_EQ(std::next(factory.ramp_cbegin(), 1), factory.ramp_cend());
+    const auto& r = *(factory.ramp_cbegin());
 
+    ASSERT_EQ(std::next(factory.storehouse_cbegin(), 1), factory.storehouse_cend());
+    const auto& s = *(factory.storehouse_cbegin());
+
+    auto prefs = r.receiver_preferences_.get_preferences();
+    ASSERT_EQ(1U, prefs.size());
+    auto key = dynamic_cast<IPackageReceiver*>(const_cast<Storehouse*>(&s));
+    ASSERT_NE(prefs.find(key), prefs.end());
+    EXPECT_DOUBLE_EQ(prefs[key], 1.0);
+}
+*/
 TEST(FactoryIOTest, ParseLinkMultipleReceivers) {
     std::ostringstream oss;
     oss << "LOADING_RAMP id=1 delivery-interval=3" << "\n"
@@ -111,33 +111,34 @@ TEST(FactoryIOTest, ParseLinkMultipleReceivers) {
     EXPECT_DOUBLE_EQ(prefs[key1], 0.5);
     EXPECT_DOUBLE_EQ(prefs[key2], 0.5);
 }
+/*
+TEST(FactoryIOTest, ParseLinkMultipleReceiversWithDefinedProbabilities) {
+    std::ostringstream oss;
+    oss << "LOADING_RAMP id=1 delivery-interval=3" << "\n"
+        << "STOREHOUSE id=1" << "\n"
+        << "STOREHOUSE id=2" << "\n"
+        << "LINK src=ramp-1 dest=store-1 p=0.3" << "\n"
+        << "LINK src=ramp-1 dest=store-2 p=0.7" << "\n";
+    std::istringstream iss(oss.str());
+    auto factory = load_factory_structure(iss);
 
-//TEST(FactoryIOTest, ParseLinkMultipleReceiversWithDefinedProbabilities) {
-//    std::ostringstream oss;
-//    oss << "LOADING_RAMP id=1 delivery-interval=3" << "\n"
-//        << "STOREHOUSE id=1" << "\n"
-//        << "STOREHOUSE id=2" << "\n"
-//        << "LINK src=ramp-1 dest=store-1 p=0.3" << "\n"
-//        << "LINK src=ramp-1 dest=store-2 p=0.7" << "\n";
-//    std::istringstream iss(oss.str());
-//    auto factory = load_factory_structure(iss);
-//
-//    ASSERT_EQ(std::next(factory.ramp_cbegin(), 1), factory.ramp_cend());
-//    const auto& r = *(factory.ramp_cbegin());
-//
-//    ASSERT_EQ(std::next(factory.storehouse_cbegin(), 2), factory.storehouse_cend());
-//    const auto& s1 = *(factory.storehouse_cbegin());
-//    const auto& s2 = *(std::next(factory.storehouse_cbegin(), 1));
-//
-//    auto prefs = r.receiver_preferences_.get_preferences();
-//    ASSERT_EQ(2U, prefs.size());
-//    auto key1 = dynamic_cast<IPackageReceiver*>(const_cast<Storehouse*>(&s1));
-//    auto key2 = dynamic_cast<IPackageReceiver*>(const_cast<Storehouse*>(&s2));
-//    ASSERT_NE(prefs.find(key1), prefs.end());
-//    ASSERT_NE(prefs.find(key2), prefs.end());
-//    EXPECT_DOUBLE_EQ(prefs[key1], 0.3);
-//    EXPECT_DOUBLE_EQ(prefs[key2], 0.7);
-//}
+    ASSERT_EQ(std::next(factory.ramp_cbegin(), 1), factory.ramp_cend());
+    const auto& r = *(factory.ramp_cbegin());
+
+    ASSERT_EQ(std::next(factory.storehouse_cbegin(), 2), factory.storehouse_cend());
+    const auto& s1 = *(factory.storehouse_cbegin());
+    const auto& s2 = *(std::next(factory.storehouse_cbegin(), 1));
+
+    auto prefs = r.receiver_preferences_.get_preferences();
+    ASSERT_EQ(2U, prefs.size());
+    auto key1 = dynamic_cast<IPackageReceiver*>(const_cast<Storehouse*>(&s1));
+    auto key2 = dynamic_cast<IPackageReceiver*>(const_cast<Storehouse*>(&s2));
+    ASSERT_NE(prefs.find(key1), prefs.end());
+    ASSERT_NE(prefs.find(key2), prefs.end());
+    EXPECT_DOUBLE_EQ(prefs[key1], 0.3);
+    EXPECT_DOUBLE_EQ(prefs[key2], 0.7);
+}
+ */
 
 TEST(FactoryIOTest, LoadAndSaveTest) {
     std::string r1 = "LOADING_RAMP id=1 delivery-interval=3";

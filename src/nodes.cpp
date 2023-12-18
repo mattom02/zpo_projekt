@@ -42,6 +42,7 @@ Storehouse& Storehouse::operator=(const Storehouse &storehouse) noexcept {
 }
 
 
+
 void ReceiverPreferences::add_receiver(IPackageReceiver *r){
     if(preferences_.empty()){
         preferences_.emplace(r, 1);

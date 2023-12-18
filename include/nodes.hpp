@@ -113,7 +113,7 @@ public:
 
     Worker(Worker&& worker) = default;
 
-    Worker(const Worker& worker);
+    Worker(const Worker &worker);
 
     Worker& operator=(const Worker &worker) noexcept;
 

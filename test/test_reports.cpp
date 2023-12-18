@@ -23,8 +23,9 @@ void perform_report_check(std::function<void(std::ostringstream&)>& reporting_fu
     }
 
     std::ostringstream expected_report_oss;
-    for (auto& i : expected_report_lines) {
-        expected_report_oss << i << "\n";
+
+    for (auto& line : expected_report_lines) {
+        expected_report_oss << line << "\n";
     }
 
     ASSERT_EQ(output_lines.size(), output_lines.size());

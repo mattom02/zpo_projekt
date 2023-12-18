@@ -139,6 +139,8 @@ public:
 
     IPackageQueue* get_queue() const { return q_.get(); }
 
+    const std::optional<Package>& get_processing_buffer() const { return processing_buffer_; }
+
     ~Worker() = default;
 private:
     ReceiverType receiverType_ = WORKER;
@@ -146,7 +148,7 @@ private:
     TimeOffset pd_;
     std::unique_ptr<IPackageQueue> q_;
     Time st_;
-    std::optional<Package> buffer_ = std::nullopt;
+    std::optional<Package> processing_buffer_ = std::nullopt;
 };
 
 class Storehouse : public IPackageReceiver{
@@ -155,9 +157,9 @@ public:
 
     Storehouse(Storehouse&& storehouse) = default;
 
-    Storehouse(const Storehouse &storehouse) : id_(storehouse.get_id()) {}
+    Storehouse(const Storehouse &storehouse);
 
-    Storehouse& operator=(const Storehouse &storehouse) noexcept { id_ = storehouse.get_id(); return *this;}
+    Storehouse& operator=(const Storehouse &storehouse) noexcept;
 
     void receive_package(Package&& p) override;
 
@@ -172,6 +174,8 @@ public:
     const_iterator end() const override { return d_->end(); }
 
     const_iterator cend() const override { return d_->end(); }
+
+    IPackageStockpile* get_stockpile() const { return d_.get(); }
 
     ~Storehouse() = default;
 private:

@@ -35,6 +35,8 @@ private:
 
 class Factory{
 public:
+    Factory() = default;
+
     void add_ramp(Ramp&& ramp) { ramps_.add(std::move(ramp)); }
 
     void remove_ramp(ElementID id) { ramps_.remove_by_id(id); }
@@ -43,9 +45,9 @@ public:
 
     NodeCollection<Ramp>::const_iterator find_ramp_by_id(ElementID id) const { return ramps_.find_by_id(id); }
 
-    NodeCollection<Ramp>::const_iterator ramp_cbegin() { return ramps_.cbegin(); }
+    NodeCollection<Ramp>::const_iterator ramp_cbegin() const { return ramps_.cbegin(); }
 
-    NodeCollection<Ramp>::const_iterator ramp_cend() { return ramps_.cend(); }
+    NodeCollection<Ramp>::const_iterator ramp_cend() const { return ramps_.cend(); }
 
     void add_storehouse(Storehouse&& storehouse) { storehouses_.add(std::move(storehouse)); }
 
@@ -55,9 +57,9 @@ public:
 
     NodeCollection<Storehouse>::const_iterator find_storehouse_by_id(ElementID id) const { return storehouses_.find_by_id(id); }
 
-    NodeCollection<Storehouse>::const_iterator storehouse_cbegin() { return storehouses_.cbegin(); }
+    NodeCollection<Storehouse>::const_iterator storehouse_cbegin() const { return storehouses_.cbegin(); }
 
-    NodeCollection<Storehouse>::const_iterator storehouse_cend() { return storehouses_.cend(); }
+    NodeCollection<Storehouse>::const_iterator storehouse_cend() const { return storehouses_.cend(); }
 
     void add_worker(Worker&& worker) { workers_.add(std::move(worker)); }
 
@@ -67,9 +69,9 @@ public:
 
     NodeCollection<Worker>::const_iterator find_worker_by_id(ElementID id) const { return workers_.find_by_id(id); }
 
-    NodeCollection<Worker>::const_iterator worker_cbegin() { return workers_.cbegin(); }
+    NodeCollection<Worker>::const_iterator worker_cbegin() const { return workers_.cbegin(); }
 
-    NodeCollection<Worker>::const_iterator worker_cend() { return workers_.cend(); }
+    NodeCollection<Worker>::const_iterator worker_cend() const { return workers_.cend(); }
 
     void do_deliveries(Time time);
 
@@ -105,6 +107,8 @@ public:
     ElementType get_element_type() const { return element_type_; }
 
     std::map<std::string, std::string> get_parameters() const { return parameters_; }
+
+    ~ParsedLineData() = default;
 private:
     ElementType element_type_;
     std::map<std::string,std::string> parameters_;

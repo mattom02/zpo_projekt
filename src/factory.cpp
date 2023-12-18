@@ -3,22 +3,22 @@
 #include <sstream>
 
 void Factory::do_deliveries(Time time){
-    for (auto i : ramps_){
+    for (auto& i : ramps_){
         i.deliver_goods(time);
     }
 }
 
 void Factory::do_package_passing(){
-    for (auto i : ramps_){
+    for (auto& i : ramps_){
         i.send_package();
     }
-    for (auto i : workers_){
+    for (auto& i : workers_){
         i.send_package();
     }
 }
 
 void Factory::do_work(Time time){
-    for (auto i : workers_){
+    for (auto& i : workers_){
         i.do_work(time);
     }
 }

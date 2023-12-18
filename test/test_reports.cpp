@@ -23,6 +23,7 @@ void perform_report_check(std::function<void(std::ostringstream&)>& reporting_fu
     }
 
     std::ostringstream expected_report_oss;
+
     for (auto& line : expected_report_lines) {
         expected_report_oss << line << "\n";
     }

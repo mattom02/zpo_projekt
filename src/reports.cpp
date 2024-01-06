@@ -16,20 +16,43 @@ void generate_structure_report(const Factory& f, std::ostream& os){
         os << "\n\n";
     });
     os << "\n== WORKERS ==\n\n";
-    std::for_each(f.worker_cbegin(), f.worker_cend(), [&os](const Worker& worker) {
-        os << "WORKER #" << worker.get_id() << "\n  Processing time: " << worker.get_processing_duration() << "\n  Queue type: " << (worker.get_queue()->get_queue_type() == PackageQueueType::FIFO ? "FIFO" : "LIFO") << "\n  Receivers:";
-        for (const auto& i : worker.receiver_preferences_.get_preferences()){
-            if(i.first->get_receiver_type() == ReceiverType::WORKER){
-                os <<"\n    worker #" << i.first->get_id();
+    std::vector<Worker> workers;
+    std::vector<ElementID> storehousesIDs;
+    std::vector<ElementID> workersIDs;
+
+    std::for_each(f.worker_cbegin(), f.worker_cend(), [&workers](const Worker& worker) {workers.push_back(worker);});
+
+    std::sort(workers.begin(), workers.end(), [](const Worker& worker1, const Worker& worker2){ return worker1.get_id() < worker2.get_id();});
+    for(const auto& i : workers){
+        os << "WORKER #" << i.get_id() << "\n  Processing time: " << i.get_processing_duration() << "\n  Queue type: " << (i.get_queue()->get_queue_type() == PackageQueueType::FIFO ? "FIFO" : "LIFO") << "\n  Receivers:";
+        for (const auto& j : i.receiver_preferences_.get_preferences()){
+            if(j.first->get_receiver_type() == ReceiverType::WORKER){
+                workersIDs.push_back(j.first->get_id());
             }
-            else if(i.first->get_receiver_type() == ReceiverType::STOREHOUSE){
-                os <<"\n    storehouse #" << i.first->get_id();
+            else if(j.first->get_receiver_type() == ReceiverType::STOREHOUSE){
+                storehousesIDs.push_back(j.first->get_id());
             }
         }
+        std::sort(storehousesIDs.begin(), storehousesIDs.end());
+        std::sort(workersIDs.begin(), workersIDs.end());
+        for (auto j : storehousesIDs){
+            os <<"\n    storehouse #" << j;
+        }
+        for (auto j : workersIDs){
+            os <<"\n    worker #" << j;
+        }
         os << "\n\n";
-    });
+        storehousesIDs.clear();
+        workersIDs.clear();
+    }
+
     os << "\n== STOREHOUSES ==\n\n";
-    std::for_each(f.storehouse_cbegin(), f.storehouse_cend(), [&os](const Storehouse& storehouse) {os << "STOREHOUSE #" << storehouse.get_id() << "\n\n";});
+    std::vector<ElementID> IDs;
+    std::for_each(f.storehouse_cbegin(), f.storehouse_cend(), [&IDs](const Storehouse& storehouse) {IDs.push_back(storehouse.get_id());});
+    std::sort(IDs.begin(), IDs.end());
+    for (auto i : IDs){
+        os << "STOREHOUSE #" << i << "\n\n";
+    }
 }
 
 void generate_simulation_turn_report(const Factory& f, std::ostream& os, Time t){
